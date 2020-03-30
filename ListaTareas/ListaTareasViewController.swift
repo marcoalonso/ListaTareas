@@ -10,9 +10,15 @@ import UIKit
 
 class ListaTareasViewController: UITableViewController {
     
-   let itemArray = ["Estudiar Xcode", "Ir a comprar comida","Sacar a Pudin a pasear"]
+   var itemArray = ["Estudiar Xcode", "Ir a comprar comida","Sacar a Pudin a pasear"]
+    //bd persistencia local
+    let defaults = UserDefaults.standard
         override func viewDidLoad() {
             super.viewDidLoad()
+            //si no existe nada guardado la app crasheará por eso se agrega if let
+            if let items = defaults.array(forKey: "ListaTareas") as? [String] {
+                itemArray = items
+            }
         }
 
         override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -40,7 +46,36 @@ class ListaTareasViewController: UITableViewController {
             tableView.deselectRow(at: indexPath, animated: true)
         }
         
+        // MARK - Add New Items
+    @IBAction func AddButtonPressed(_ sender: UIBarButtonItem) {
         
+        var textField = UITextField() //variable local para guardar el texto del usuario
+        
+        let alert = UIAlertController(title: "Agregar Nueva Nota", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Agregar Nota", style: .default) { (action) in
+                // una vez que el usuario da click en agregar nota
+            //Valida que no esté vacio el titulo de la nota
+            if textField.text != "" {
+                
+                self.itemArray.append(textField.text!) //agrega al arreglo la nueva nota
+                self.defaults.set(self.itemArray, forKey: "ListaTareas")
+            }
+            self.tableView.reloadData()
+            }
+        alert.addTextField { (alertTextField) in
+            //configurar textFields
+            alertTextField.placeholder = "Crear nueva nota"
+            textField = alertTextField
+            
+            print(alertTextField.text!)
+            
+        }
+            alert.addAction(action)
+        
+            present(alert, animated: true, completion: nil)
+        
+    }
+    
     }
 
 
