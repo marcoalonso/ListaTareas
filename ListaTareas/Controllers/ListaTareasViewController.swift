@@ -15,7 +15,7 @@ class ListaTareasViewController: UITableViewController {
     let defaults = UserDefaults.standard
         override func viewDidLoad() {
             super.viewDidLoad()
-            //si no existe nada guardado la app crasheará por eso se agrega if let
+            //si no existe nada guardado la app crasheará por eso se agrega if blet
             if let items = defaults.array(forKey: "ListaTareas") as? [String] {
                 itemArray = items
             }
