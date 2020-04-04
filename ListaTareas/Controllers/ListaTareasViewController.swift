@@ -117,9 +117,17 @@ class ListaTareasViewController: UITableViewController {
     
     
     //establecer un valor por defecto por si llamamos SIN request
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
         //crear una solicitud
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        //si la busqueda es con categoria & item
+        if let aditionalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, aditionalPredicate])
+        } else { //solo es cargar las categorias
+            request.predicate = categoryPredicate
+        }
         
+
         do {
             //guardara los resultados en el Array cuando los cargue de sqlite
             itemArray = try context.fetch(request)
@@ -138,13 +146,14 @@ extension ListaTareasViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request : NSFetchRequest<Item> = Item.fetchRequest()
-        //"cd" insensible May o minus
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+             //"cd" insensible May o minus
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+   
         
         //ordenar los resultados de la busqueda
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        loadItems(with: request) //with external parameter & request: internal parameter
+        loadItems(with: request, predicate: predicate) //with external parameter & request: internal parameter
        
        }
     
