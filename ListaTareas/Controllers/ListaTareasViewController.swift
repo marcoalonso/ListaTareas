@@ -7,20 +7,19 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class ListaTareasViewController: UITableViewController {
     
-   var itemArray = [Item]()
+    
+    var toDoItems: Results<Item>?
+    let realm = try! Realm()
     
     var selectedCategory : Category? {
         didSet {
-            loadItems()
+           loadItems()
         }
     }
-    //bd persistencia local
-    let defaults = UserDefaults.standard
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
         override func viewDidLoad() {
@@ -30,20 +29,20 @@ class ListaTareasViewController: UITableViewController {
 
 // MARK: - TableViewMethods
         override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return itemArray.count
+            return toDoItems?.count ?? 1
         }
-    
-    
-        
     
         override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
             
-            let item = itemArray[indexPath.row]
-            
-            cell.textLabel?.text = item.title
-               //Verificar para marcar con ☑️ si esta seleccionada o no operador ternario
-            cell.accessoryType = item.done == true ? .checkmark : .none
+            if let item = toDoItems?[indexPath.row] {
+                
+                cell.textLabel?.text = item.title
+                   //Verificar para marcar con ☑️ si esta seleccionada o no operador ternario
+                cell.accessoryType = item.done == true ? .checkmark : .none
+            } else {
+                cell.textLabel?.text = "No se han agregado tareas aún!"
+            }
                  
             return cell
         }
@@ -56,12 +55,23 @@ class ListaTareasViewController: UITableViewController {
             //verificamos si tiene el checkmark cuando selecciona una celda
             //itemArray[indexPath.row].setValue("Realizado", forKey: "title") //editar notas
             
+            if let item = toDoItems? [indexPath.row] {
+                do {
+                    try realm.write{
+                        //editar lista de hecho a sin hacer <->
+                        item.done = !item.done
+                        
+                        //Eliminar notas
+                        //realm.delete(item)
+                    }
 
-//            context.delete(itemArray[indexPath.row]) //elimina de la bd but necesita saveContext()
-//            itemArray.remove(at: indexPath.row) //elimina elemento de la matriz
+                } catch {
+                    print("error saving items \(error)")
+                }
+            }
             
-            itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-            saveItems()
+            tableView.reloadData()
+           
             tableView.deselectRow(at: indexPath, animated: true)
         }
     
@@ -71,29 +81,36 @@ class ListaTareasViewController: UITableViewController {
         // MARK: - Add New Items
     @IBAction func AddButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField() //variable local para guardar el texto del usuario
+        
         let alert = UIAlertController(title: "Agregar Nueva Nota", message: "", preferredStyle: .alert)
+        
         let action = UIAlertAction(title: "Agregar Nota", style: .default) { (action) in
-                // una vez que el usuario da click en agregar nota
-            //Valida que no esté vacio el titulo de la nota
-            if textField.text != "" {
+                
+            //if textField.text != "" {
                 //Agregar nuevo elemento a la lista
                 //acceso a la Clase AppDelegate como objeto
                 
-                let newItem = Item(context: self.context)
-                newItem.title = textField.text!
-                newItem.done = false
-                newItem.parentCategory = self.selectedCategory
-                self.itemArray.append(newItem) //agrega al arreglo la nueva nota
-                self.saveItems()
-            }
-            
-           
+                if let currentCategory = self.selectedCategory {
+                    do {
+                        try self.realm.write {
+                            let newItem =  Item()
+                            newItem.title = textField.text!
+                            newItem.dateCreated = Date()
+                            currentCategory.items.append(newItem)
+                        }
+                    } catch {
+                        print("Error al guardar en bd realm \(error.localizedDescription)")
+                    }
+                }
+            self.tableView.reloadData()
+                
         }
-            alert.addTextField { (alertTextField) in
+            
+        alert.addTextField { (alertTextField) in
             //configurar textFields
             alertTextField.placeholder = "Crear nueva nota"
             textField = alertTextField
-            
+
         }
             alert.addAction(action)
         
@@ -105,65 +122,36 @@ class ListaTareasViewController: UITableViewController {
 
     // MARK: - Model Manipulation Methods
 
-    func saveItems() {
-        
-        do {
-            try context.save()
-        } catch {
-            print("error saving context --> \(error.localizedDescription)")
-        }
-        self.tableView.reloadData()
-    }
     
     
     //establecer un valor por defecto por si llamamos SIN request
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
-        //crear una solicitud
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        //si la busqueda es con categoria & item
-        if let aditionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, aditionalPredicate])
-        } else { //solo es cargar las categorias
-            request.predicate = categoryPredicate
-        }
-        
+    func loadItems(){
 
-        do {
-            //guardara los resultados en el Array cuando los cargue de sqlite
-            itemArray = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context  -> \(error.localizedDescription)")
-        }
-        
+        toDoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+
         tableView.reloadData()
-        
+
     }
     
 }
 
-//MARK: - SearchBar Methods
+// MARK: - SearchBar Methods
 extension ListaTareasViewController: UISearchBarDelegate {
-    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-             //"cd" insensible May o minus
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-   
+        toDoItems = toDoItems?.filter("title CONTAINS [cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
         
-        //ordenar los resultados de la busqueda
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        loadItems(with: request, predicate: predicate) //with external parameter & request: internal parameter
-       
+        tableView.reloadData()
+
        }
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
             loadItems()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
-            
+
         }
     }
 }
