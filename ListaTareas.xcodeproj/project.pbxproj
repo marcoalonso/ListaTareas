@@ -16,6 +16,7 @@
 		6C46BE5F243181B100414990 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6C46BE5D243181B100414990 /* Main.storyboard */; };
 		6C46BE61243181B300414990 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C46BE60243181B300414990 /* Assets.xcassets */; };
 		6C46BE64243181B300414990 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6C46BE62243181B300414990 /* LaunchScreen.storyboard */; };
+		6C8E14A2243D3FB10049677F /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8E14A1243D3FB10049677F /* SwipeTableViewController.swift */; };
 		6C9476C32436D622000C07F1 /* CategoriaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9476C22436D622000C07F1 /* CategoriaViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		6C46BE60243181B300414990 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6C46BE63243181B300414990 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6C46BE65243181B300414990 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6C8E14A1243D3FB10049677F /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		6C9476C22436D622000C07F1 /* CategoriaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriaViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -94,6 +96,7 @@
 			children = (
 				6C46BE5B243181B100414990 /* ListaTareasViewController.swift */,
 				6C9476C22436D622000C07F1 /* CategoriaViewController.swift */,
+				6C8E14A1243D3FB10049677F /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 				6C9476C32436D622000C07F1 /* CategoriaViewController.swift in Sources */,
 				6C46BE5C243181B100414990 /* ListaTareasViewController.swift in Sources */,
 				6C46BE58243181B100414990 /* AppDelegate.swift in Sources */,
+				6C8E14A2243D3FB10049677F /* SwipeTableViewController.swift in Sources */,
 				6C3CB6DC24382C490051D242 /* Item.swift in Sources */,
 				6C46BE5A243181B100414990 /* SceneDelegate.swift in Sources */,
 				6C3CB6DE24382C550051D242 /* Category.swift in Sources */,

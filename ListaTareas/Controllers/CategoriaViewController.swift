@@ -8,19 +8,33 @@
 
 import UIKit
 import RealmSwift
+import SwipeCellKit
+import ChameleonFramework
 
-class CategoriaViewController: UITableViewController {
-    //coreData
+class CategoriaViewController: SwipeTableViewController {
+    
     var categories : Results<Category>?
     
     let realm = try! Realm()
     
-   
     override func viewDidLoad() {
         super.viewDidLoad()
         
              loadCategories()
+        
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        
+        
+       
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar else {
+            fatalError("No existe NavController")
+        }
+        navBar.backgroundColor = UIColor(hexString: "1D9BF6")
     }
     //MARK: - TableView Datasource Methods
     
@@ -29,13 +43,19 @@ class CategoriaViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No se han agregado categorias aún"
+        
+        
+        cell.backgroundColor = UIColor(hexString: categories![indexPath.row]["color"] as! String)
+     
         return cell
     }
 
     
-    //MARK: - TableView Manipulation Methods
+    //MARK: - Data Manipulation Methods
     func save(category: Category) {
         do {
             try realm.write {
@@ -55,37 +75,50 @@ class CategoriaViewController: UITableViewController {
         tableView.reloadData()
                 
     }
-    
+    // MARK: - Delete Data from Swipe
+    override func updateModel(at indexPath: IndexPath){
+               if let categoryForDelete = self.categories?[indexPath.row] {
+                do {
+                    try self.realm.write{
+                        self.realm.delete(categoryForDelete)
+                    }
+                } catch {
+                    print("error deleting categories \(error.localizedDescription)")
+                }
+                // tableView.reloadData()
+        }
+    }
 
     
     //MARK: - Add New Categories
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField() //variable local para guardar el texto del usuario
-                       
-                           let alert = UIAlertController(title: "Agregar Nueva Categoria", message: "", preferredStyle: .alert)
-                           let action = UIAlertAction(title: "Agregar", style: .default) { (action) in
-                                   // una vez que el usuario da click en agregar nota
-                               //Valida que no esté vacio el titulo de la nota
-               //                if textField.text != "" {
-               //                    //Agregar nuevo elemento a la lista
-               //                    //acceso a la Clase AppDelegate como objeto
-                                   
-                                   let newCategory = Category()
-                                   newCategory.name = textField.text!
-                                   
-                                    self.save(category: newCategory)
-                                   //print(self.categories)
-                                   
-                               //} //end if validation
-                           } //end clousure in
-                               alert.addAction(action)
-                               alert.addTextField { (field) in
-                               //configurar textFields
-                                   textField = field
-                                   textField.placeholder = "Crear nueva Categoria"
-                               } // end closure in
-                               
-                               present(alert, animated: true, completion: nil)
+        
+        let alert = UIAlertController(title: "Agregar Nueva Categoria", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Agregar", style: .default) { (action) in
+            // una vez que el usuario da click en agregar nota
+            //Valida que no esté vacio el titulo de la nota
+                           if textField.text != "" {
+            
+            //creamos obj de tipo Category()
+            let newCategory = Category()
+            newCategory.name = textField.text!
+            
+            newCategory.color = UIColor.randomFlat().hexValue()
+            
+            self.save(category: newCategory)
+            //print(self.categories)
+            
+            } //end if validation
+        } //end clousure in
+        alert.addAction(action)
+        alert.addTextField { (field) in
+            //configurar textFields
+            textField = field
+            textField.placeholder = "Crear nueva Categoria"
+        } // end closure in
+        
+        present(alert, animated: true, completion: nil)
     }
     
     //MARK: - TableView Delegate Methods
@@ -103,3 +136,4 @@ class CategoriaViewController: UITableViewController {
        }
     
 }
+

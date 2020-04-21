@@ -6,7 +6,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--ITems-->
+        <!--Pendientes-->
         <scene sceneID="9Gu-Pd-hQA">
             <objects>
                 <tableViewController id="fWD-KA-lKQ" customClass="ListaTareasViewController" customModule="ListaTareas" customModuleProvider="target" sceneMemberID="viewController">
@@ -23,7 +23,7 @@
                             </connections>
                         </searchBar>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ToDoItemCell" id="2ML-Xq-JRh">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="2ML-Xq-JRh" customClass="SwipeTableViewCell" customModule="SwipeCellKit">
                                 <rect key="frame" x="0.0" y="72" width="375" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2ML-Xq-JRh" id="OVE-4E-7Pi">
@@ -37,7 +37,7 @@
                             <outlet property="delegate" destination="fWD-KA-lKQ" id="8RE-jf-Apf"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="ITems" id="W3z-yR-TGC">
+                    <navigationItem key="navigationItem" title="Pendientes" id="W3z-yR-TGC">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="4eh-mZ-Rwr">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
@@ -45,6 +45,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="searchBar" destination="nkJ-c4-rF8" id="5GU-qK-6iR"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4iG-z3-rlE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -55,13 +58,11 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="0LY-z6-hnv" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="T26-1u-oUr">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="T26-1u-oUr">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </textAttributes>
                         <textAttributes key="largeTitleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -76,7 +77,7 @@
             </objects>
             <point key="canvasLocation" x="335" y="161"/>
         </scene>
-        <!--Lista de Tareas ☑️-->
+        <!--Mis Notas 🧾-->
         <scene sceneID="zRS-XX-XmV">
             <objects>
                 <tableViewController id="PeM-Dn-qUZ" customClass="CategoriaViewController" customModule="ListaTareas" customModuleProvider="target" sceneMemberID="viewController">
@@ -85,7 +86,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CategoryCell" id="CrD-SN-8fe">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="CrD-SN-8fe" customClass="SwipeTableViewCell" customModule="SwipeCellKit">
                                 <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="CrD-SN-8fe" id="bYT-mA-VGm">
@@ -99,9 +100,8 @@
                             <outlet property="delegate" destination="PeM-Dn-qUZ" id="h6i-h1-kQi"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Lista de Tareas ☑️" id="w8b-Ef-BY8">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="7Up-K4-oRA">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <navigationItem key="navigationItem" title="Mis Notas 🧾" id="w8b-Ef-BY8">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="add" id="7Up-K4-oRA">
                             <connections>
                                 <action selector="addButtonPressed:" destination="PeM-Dn-qUZ" id="weD-zq-tMF"/>
                             </connections>
